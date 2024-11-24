@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fun Match Game Beta</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="title">Fun Match Game Beta</div>
+    <div class="auth-buttons">
+      <button id="loginBtn">Login</button>
+      <button id="registerBtn">Register</button>
+    </div>
+    <div class="user-info" style="display: none;">Welcome, <span id="username"></span></div>
+  </header>
+  <main>
+    <button id="startGameBtn">Start Game</button>
+  </main>
+
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <h2>Login</h2>
+    <input type="text" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button id="loginSubmitBtn">Login</button>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="modal" id="registerModal">
+    <h2>Register</h2>
+    <input type="text" id="registerEmail" placeholder="Email">
+    <input type="password" id="registerPassword" placeholder="Password">
+    <input type="text" id="registerNickname" placeholder="Nickname">
+    <button id="registerSubmitBtn">Register</button>
+  </div>
+
+  <!-- Overlay -->
+  <div class="overlay" id="modalOverlay"></div>
+
+  <script src="scripts.js" defer></script>
+</body>
