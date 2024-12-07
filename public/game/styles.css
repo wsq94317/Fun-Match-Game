@@ -1,62 +1,74 @@
 body {
-    font-family: Arial, sans-serif;
-    background: #f7f7f7;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  .game-container {
-    text-align: center;
-  }
-  
-  .board {
-    display: grid;
-    grid-template-columns: repeat(8, 50px);
-    grid-template-rows: repeat(8, 50px);
-    gap: 5px;
-    margin: 20px auto;
-    width: fit-content;
-  }
-  
-  .cell {
-    width: 50px;
-    height: 50px;
-    background: lightgray;
-    border: 1px solid #ccc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .cell.hidden {
-    background: #ddd;
-    color: transparent;
-  }
-  
-  button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background: #45a049;
-  }
-  
-  .message {
-    margin-top: 10px;
-    font-size: 1.2rem;
-    color: #333;
-  }
-  
+  font-family: Arial, sans-serif;
+  background: #f7f7f7;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.game-container {
+  text-align: center;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, 50px);
+  grid-template-rows: repeat(8, 50px);
+  gap: 5px;
+  margin: 20px auto;
+  width: fit-content;
+}
+
+.cell {
+  width: 50px;
+  height: 50px;
+  background: lightgray;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+
+.cell:hover {
+  background: #e0e0e0;
+}
+
+
+.cell:active {
+  background: #ccc;
+  transform: scale(0.95);
+}
+
+.cell.hidden {
+  background: #ddd;
+  color: transparent;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+.message {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: #333;
+}

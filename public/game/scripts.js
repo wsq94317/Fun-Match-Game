@@ -5,6 +5,7 @@ const rows = 8;
 const cols = 8;
 let grid = [];
 let currentPreview = null;
+let gameStarted = false;
 
 //generate a random piece
 function getRandomPiece(){
@@ -27,6 +28,8 @@ function initialiseBoard(){
             cell.dataset.row = r;
             cell.dataset.col = c;
             cell.textContent = piece;
+
+            cell.addEventListener('click', onCellClick);
             board.appendChild(cell);
         }
         grid.push(row);
@@ -54,4 +57,22 @@ startGameBtn.addEventListener('click', () => {
     initialiseBoard();
     showPreview();
 })
+
+function onCellClick(e) {
+    const cell = e.currentTarget;
+    const row = cell.dataset.row;
+    const col = cell.dataset.col;
+    const piece = grid[row][col];
+    console.log(`Cell clicked: Row ${row}, Col ${col}, Piece ${Piece}`);
+}
+
+quitGameBtn.addEventListener('click', ()=> {
+    console.log('Quit Game button Clicked');
+
+    board.innerHTML = '';
+    message.textContent = 'Game Over!';
+    quitGameBtn.style.display = 'none';
+    startGameBtn.style.display = 'inline-block';
+    gameStarted = false;
+});
 
