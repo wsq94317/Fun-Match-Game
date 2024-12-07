@@ -9,8 +9,12 @@ let currentPreview = null;
 let currentPiecesQuene = [];
 
 // Difficulities Level
-const rows = 8;
-const cols = 8;
+const rows = 5;
+const cols = 5;
+
+let countdownTime = 5; //default level 1
+let countdownInterval = null;
+let timeLeft = countdownTime;
 
 let gameStarted = false;
 let isShowingNextPiece = false;
@@ -40,9 +44,14 @@ function getRandomPieceFromAllowed(allowed) {
 
 // Rendering board
 function renderBoard() {
+    // Edit Style
+    board.style.gridTemplateColumns = `repeat(${cols},50px)`;
+    board.style.gridTemplateRows = `repeat(${rows}, 50px)`;
+
     board.innerHTML = '';
+
     for (let r = 0; r < rows; r++) {
-        for (let c = 0; c< rows; c++) {
+        for (let c = 0; c< cols; c++) {
             const piece = grid[r][c];
             const cell = document.createElement('div');
 
@@ -75,11 +84,24 @@ function initialiseBoard() {
 function generateRandomBoard() {
     grid = [];
     const allowed = basePieces;
+    const totalCells = rows * cols;
+    const maxPieces = Math.floor(totalCells /2);
+
+    let placedPieces = 0;
+
+
     for (let r = 0; r < rows; r++) {
         const rowArr = [];
         for (let c = 0; c < cols; c++) {
-            const isEmpty = Math.random() < 0.2;
-            let piece = isEmpty ? null : getRandomPieceFromAllowed(allowed);
+            let piece = null;
+            if (placedPieces < maxPieces) {
+                const shouldPlacePiece = Math.random() < 0.5;
+                if (shouldPlacePiece) {
+                    piece = getRandomPieceFromAllowed(allowed);
+                    placedPieces++;
+                }
+            }
+
             rowArr.push(piece);
         }
         grid.push(rowArr);
@@ -122,6 +144,8 @@ function showNextPieces() {
     setTimeout(()=> {
         message.textContent = 'Next Piece: ???';
         isShowingNextPiece = false;
+
+        startCountdown();
     }, previewDuration);
 }
 
@@ -136,6 +160,11 @@ function onCellClick(e) {
     if (piece !== null) return;
 
     if (currentPiecesQuene.length > 0) {
+        // Player place cell before the contdown over
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+
+
         const nextPiece = currentPiecesQuene.shift();
         grid[r][c] = nextPiece;
         renderBoard();
@@ -148,6 +177,8 @@ function onCellClick(e) {
 
         if (currentPiecesQuene.length === 0 ) {
             showNextPieces();
+        } else {
+            startCountdown();
         }
     }
 }
@@ -258,6 +289,83 @@ function updateBoard() {
     });
 }
 
+function startCountdown() {
+    if (countdownInterval !== null) {
+        return;
+    }
+    console.log('startCountdown kcalled');
+    //remove old 
+    clearInterval(countdownInterval);
+    timeLeft = countdownTime;
+
+    message.textContent = `Time Left: ${timeLeft}s | NextPiece: ???`;
+
+    countdownInterval = setInterval(()=> {
+        timeLeft--;
+        if(timeLeft > 0){
+            message.textContent =`Time Left: ${timeLeft}s | NextPiece: ???`;
+        } else {
+            //if countdown finish and the player doesnt response
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+            forcePlacePiece(); //Radomly place one cell
+        }
+
+    }, 1000);
+}
+
+function forcePlacePiece() {
+    console.log('forcePlacePiece called');
+    if (currentPiecesQuene.length > 0) {
+        console.log('There are pieces to force place');
+        const nextPiece = currentPiecesQuene.shift();
+
+        //find all empty cells
+        let emptyCells = [];
+        for (let r = 0; r< rows; r++) {
+            for (let c=0; c<cols; c++) {
+                if (grid[r][c] === null) {
+                    emptyCells.push({r,c});
+                }
+            }
+        }
+
+        if (emptyCells.length > 0) {
+            // choose one random cell to place current cell
+            const chosen = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            grid[chosen.r][chosen.c] = nextPiece;
+            renderBoard();
+            checkAndRemoveMatches();
+
+            if (isBoardEmpty()) {
+                console.log('Board empty after force placement, game over');
+                gameOver();
+                return;
+            }
+
+            currentPiecesQuene = [];
+            console.log('Forced piece placed, discarding remaining pieces and showing a new sequence');
+            showNextPieces();
+
+            // if (currentPiecesQuene.length === 0) {
+            //     console.log('Pieces used up, show next batch');
+            //     showNextPieces();
+            // } else {
+            //     console.log('Still have pieces, start countdown again');
+            //     startCountdown();
+            // }
+        } else {
+            console.log('No empty cells, game over');
+            gameOver();
+        }
+
+
+    } else {
+        console.log('No pieces in queue, show next pieces');
+        showNextPieces();
+    }
+}
+
 startGameBtn.addEventListener('click', () => {
     console.log('Start Game button clicked'); 
     initialiseBoard();
@@ -266,13 +374,6 @@ startGameBtn.addEventListener('click', () => {
     showNextPieces();
 })
 
-// function onCellClick(e) {
-//     const cell = e.currentTarget;
-//     const row = cell.dataset.row;
-//     const col = cell.dataset.col;
-//     const piece = grid[row][col];
-//     console.log(`Cell clicked: Row ${row}, Col ${col}, Piece ${Piece}`);
-// }
 
 quitGameBtn.addEventListener('click', ()=> {
     console.log('Quit Game button Clicked');
