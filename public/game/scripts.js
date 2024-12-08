@@ -161,7 +161,7 @@ function onCellClick(e) {
     if (isShowingNextPiece) return;
 
     board.classList.remove('no-click');
-    
+
     const cell = e.currentTarget;
     const r = parseInt(cell.dataset.row, 10);
     const c = parseInt(cell.dataset.col, 10);
@@ -180,11 +180,17 @@ function onCellClick(e) {
         renderBoard();
         checkAndRemoveMatches();//
 
+        // decide if mission succeed
         if (isBoardEmpty()) {
-            gameOver();
+            takeSuccess();
             return;
         }
 
+        //decide if mission failed
+        if (isBoardFull()) {
+            gameOver();
+            return;
+        }
         verifyCurrentSequence(); // if there contains a pieces that no longer exists in the board, refresh sequence
         if (currentPiecesQuene.length === 0 ) {
             showNextPieces();
@@ -251,7 +257,25 @@ function isBoardEmpty() {
 
 function gameOver() {
     // message.textContent = 'Game Over! All cleared!';
-    piecesInfo.textContent = 'Game Over! All cleared!';
+    // piecesInfo.textContent = 'Game Over! All cleared!';
+    piecesInfo.textContent = 'Game Over! No moves left!';
+    board.classList.add('no-click');
+}
+
+function takeSuccess() {
+    piecesInfo.textContent = 'Task Completed! You cleared the board!';
+    board.classList.add('no-click');
+}
+
+function isBoardFull(){
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            if (grid[r][c] === null) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 // //generate a random piece
