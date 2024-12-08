@@ -1,7 +1,10 @@
 const board = document.getElementById('board');
 const startGameBtn = document.getElementById('startGameBtn');
 const quitGameBtn = document.getElementById('quitGameBtn');
-const message = document.getElementById('message');
+// const message = document.getElementById('message');
+const piecesInfo = document.getElementById('piecesInfo');
+const countdownInfo = document.getElementById('countdownInfo');
+
 
 
 let grid = [];
@@ -134,16 +137,21 @@ function hasThreeInARow(){
 
 function showNextPieces() {
     isShowingNextPiece = true;
+    board.classList.add('no-click');
     const allowed = getAllAllowedPieces();
     currentPiecesQuene = [];
     for (let i = 0; i < piecesToShow; i++) {
         currentPiecesQuene.push(getRandomPieceFromAllowed(allowed));
     }
 
-    message.textContent = `Next Pieces : ${currentPiecesQuene.join(' ')}`;
+    // message.textContent = `Next Pieces : ${currentPiecesQuene.join(' ')}`;
+    piecesInfo.textContent = `Next Pieces: ${currentPiecesQuene.join(' ')}`;
+    countdownInfo.textContent ='';
+
     setTimeout(()=> {
-        message.textContent = 'Next Piece: ???';
+        piecesInfo.textContent = 'Next Piece: ???';
         isShowingNextPiece = false;
+        board.classList.remove('no-click');
 
         startCountdown();
     }, previewDuration);
@@ -152,6 +160,8 @@ function showNextPieces() {
 function onCellClick(e) {
     if (isShowingNextPiece) return;
 
+    board.classList.remove('no-click');
+    
     const cell = e.currentTarget;
     const r = parseInt(cell.dataset.row, 10);
     const c = parseInt(cell.dataset.col, 10);
@@ -175,6 +185,7 @@ function onCellClick(e) {
             return;
         }
 
+        verifyCurrentSequence(); // if there contains a pieces that no longer exists in the board, refresh sequence
         if (currentPiecesQuene.length === 0 ) {
             showNextPieces();
         } else {
@@ -239,7 +250,8 @@ function isBoardEmpty() {
 
 
 function gameOver() {
-    message.textContent = 'Game Over! All cleared!';
+    // message.textContent = 'Game Over! All cleared!';
+    piecesInfo.textContent = 'Game Over! All cleared!';
 }
 
 // //generate a random piece
@@ -298,12 +310,14 @@ function startCountdown() {
     clearInterval(countdownInterval);
     timeLeft = countdownTime;
 
-    message.textContent = `Time Left: ${timeLeft}s | NextPiece: ???`;
+    // message.textContent = `Time Left: ${timeLeft}s | NextPiece: ???`;
+    countdownInfo.textContent = `Time Left: ${timeLeft}s`;
 
     countdownInterval = setInterval(()=> {
         timeLeft--;
         if(timeLeft > 0){
-            message.textContent =`Time Left: ${timeLeft}s | NextPiece: ???`;
+            // message.textContent =`Time Left: ${timeLeft}s | NextPiece: ???`;
+            countdownInfo.textContent = `Time Left: ${timeLeft}s`;
         } else {
             //if countdown finish and the player doesnt response
             clearInterval(countdownInterval);
@@ -366,6 +380,19 @@ function forcePlacePiece() {
     }
 }
 
+function verifyCurrentSequence() {
+    const allowed = getAllAllowedPieces();
+
+    const isSequenceValid = currentPiecesQuene.every(pieceType => allowed.includes(pieceType));
+
+    if (!isSequenceValid) {
+        console.log('Current Sequence contains a piece type no longer available on the board');
+        currentPiecesQuene = [];
+        showNextPieces();
+    }
+
+}
+
 startGameBtn.addEventListener('click', () => {
     console.log('Start Game button clicked'); 
     initialiseBoard();
@@ -379,7 +406,8 @@ quitGameBtn.addEventListener('click', ()=> {
     console.log('Quit Game button Clicked');
 
     board.innerHTML = '';
-    message.textContent = 'Game Over!';
+    // message.textContent = 'Game Over!';
+    piecesInfo.textContent = 'Game Over!';
     quitGameBtn.style.display = 'none';
     startGameBtn.style.display = 'inline-block';
     gameStarted = false;
