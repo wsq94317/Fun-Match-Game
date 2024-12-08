@@ -160,8 +160,6 @@ function showNextPieces() {
 function onCellClick(e) {
     if (isShowingNextPiece) return;
 
-    board.classList.remove('no-click');
-
     const cell = e.currentTarget;
     const r = parseInt(cell.dataset.row, 10);
     const c = parseInt(cell.dataset.col, 10);
@@ -192,6 +190,7 @@ function onCellClick(e) {
             return;
         }
         verifyCurrentSequence(); // if there contains a pieces that no longer exists in the board, refresh sequence
+        
         if (currentPiecesQuene.length === 0 ) {
             showNextPieces();
         } else {
@@ -377,21 +376,21 @@ function forcePlacePiece() {
 
             if (isBoardEmpty()) {
                 console.log('Board empty after force placement, game over');
+                takeSuccess();
+                return;
+            }
+
+            if (isBoardFull()) {
                 gameOver();
                 return;
             }
+
+
 
             currentPiecesQuene = [];
             console.log('Forced piece placed, discarding remaining pieces and showing a new sequence');
             showNextPieces();
 
-            // if (currentPiecesQuene.length === 0) {
-            //     console.log('Pieces used up, show next batch');
-            //     showNextPieces();
-            // } else {
-            //     console.log('Still have pieces, start countdown again');
-            //     startCountdown();
-            // }
         } else {
             console.log('No empty cells, game over');
             gameOver();
